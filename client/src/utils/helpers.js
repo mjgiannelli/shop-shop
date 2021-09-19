@@ -37,7 +37,7 @@ export function idbPromise(storeName, method, object) {
       store = tx.objectStore(storeName);
 
       // fi there's any errors, let us know
-      dob.onerror = function (e) {
+      db.onerror = function (e) {
         console.log('error', e);
       };
 
