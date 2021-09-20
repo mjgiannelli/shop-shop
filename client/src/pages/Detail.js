@@ -29,7 +29,7 @@ function Detail() {
     // already in global store
     if (products.length) {
       setCurrentProduct(products.find(product => product._id === id));
-    // retrieved from server
+      // retrieved from server
     } else if (data) {
       dispatch({
         type: UPDATE_PRODUCTS,
@@ -61,11 +61,18 @@ function Detail() {
         _id: id,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
       });
+      // if we're updating quantity, use existing item data and increment purchaseQuantity value by one
+      idbPromise('cart', 'put', {
+        ...itemInCart,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
+      });
     } else {
       dispatch({
         type: ADD_TO_CART,
         product: { ...currentProduct, purchaseQuantity: 1 }
       });
+      // if product isn't in the cart yet, add it to the current shopping cart in IndexedDB
+      idbPromise('cart', 'put', { ...currentProduct, purchaseQuantity: 1 });
     }
   };
 
@@ -74,6 +81,9 @@ function Detail() {
       type: REMOVE_FROM_CART,
       _id: currentProduct._id
     });
+
+    // upon removal from cart, delete the item from IndexedDB using the `currentProduct._id` to locate what to remove
+    idbPromise('cart', 'delete', {...currentProduct});
   };
 
   return (
@@ -94,7 +104,7 @@ function Detail() {
               onClick={removeFromCart}
             >
               Remove from Cart
-              </button>
+            </button>
           </p>
 
           <img
