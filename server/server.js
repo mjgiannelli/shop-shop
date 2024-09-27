@@ -32,6 +32,7 @@ app.get('*', (req, res) => {
 
 db.once('open', () => {
   app.listen(PORT, () => {
+    const graphqlPath = server.graphqlPath;
     console.log(`API server running on port ${PORT}!`);
     if (process.env.NODE_ENV === 'production') {
       console.log(`Use GraphQL at https://${process.env.RENDER_EXTERNAL_URL}${graphqlPath}`);
